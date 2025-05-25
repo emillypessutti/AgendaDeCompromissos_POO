@@ -122,16 +122,17 @@ class Program
 
     static void EditarCompromissos(string[] args, List<Compromisso> lista)
     {
-        if (args.Length < 9)
+
+        if (args.Length < 1)
         {
-            Console.WriteLine("Uso: editar <indice> <novo_usuario> <nova_data> <nova_hora> <novo_local> <nova_descricao> <nova_capacidade> <novo_participante> <nova_anotacao>");
+            Console.WriteLine("Uso: editar <indice> <novo_usuario> <nova_data> <nova_hora> <nova_descricao> <novo_local> <nova_capacidade> <novo_participante> <nova_anotacao>");
             return;
         }
 
         string[] argumentos = new string[9];
         for (int i = 0; i < 9; i++)
         {
-            argumentos[i] = i < args.Length ? args[i] : "";
+            argumentos[i] = (i < args.Length && args[i] != null) ? args[i] : "";
         }
 
         if (!int.TryParse(argumentos[0], out int indiceVisual) || indiceVisual < 1 || indiceVisual > lista.Count)
@@ -143,8 +144,35 @@ class Program
 
         var compromisso = lista[indice];
         var usuarioTemp = !string.IsNullOrWhiteSpace(argumentos[1]) ? new Usuario { Nome = argumentos[1] } : compromisso.Usuario;
-        var dataTemp = !string.IsNullOrWhiteSpace(argumentos[2]) ? DateTime.Parse(argumentos[2]) : compromisso.Data;
-        var horaTemp = !string.IsNullOrWhiteSpace(argumentos[3]) ? TimeSpan.Parse(argumentos[3]) : compromisso.Hora;
+
+        DateTime dataTemp;
+        if (!string.IsNullOrWhiteSpace(argumentos[2]))
+        {
+            if (!DateTime.TryParse(argumentos[2], out dataTemp))
+            {
+                Console.WriteLine("Data inválida.");
+                return;
+            }
+        }
+        else
+        {
+            dataTemp = compromisso.Data;
+        }
+
+        TimeSpan horaTemp;
+        if (!string.IsNullOrWhiteSpace(argumentos[3]))
+        {
+            if (!TimeSpan.TryParse(argumentos[3], out horaTemp))
+            {
+                Console.WriteLine("Hora inválida.");
+                return;
+            }
+        }
+        else
+        {
+            horaTemp = compromisso.Hora;
+        }
+
         var descricaoTemp = !string.IsNullOrWhiteSpace(argumentos[4]) ? argumentos[4] : compromisso.Descricao;
         var localTemp = compromisso.Local != null
             ? new Local { NomeLocal = compromisso.Local.NomeLocal, CapacidadeMax = compromisso.Local.CapacidadeMax }
@@ -153,18 +181,25 @@ class Program
         if (!string.IsNullOrWhiteSpace(argumentos[5]))
             localTemp.NomeLocal = argumentos[5];
         if (!string.IsNullOrWhiteSpace(argumentos[6]))
-            localTemp.CapacidadeMax = int.Parse(argumentos[6]);
+        {
+            if (!int.TryParse(argumentos[6], out int capacidade))
+            {
+                Console.WriteLine("Capacidade inválida.");
+                return;
+            }
+            localTemp.CapacidadeMax = capacidade;
+        }
 
         var participantesTemp = compromisso.participantes;
         if (!string.IsNullOrWhiteSpace(argumentos[7]))
-            participantesTemp = args[7]
+            participantesTemp = argumentos[7]
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
                 .Select(p => new Participante { Nome = p.Trim() })
                 .ToList();
 
         var anotacoesTemp = compromisso.anotacoes;
-        if (!string.IsNullOrWhiteSpace(args[8]))
-            anotacoesTemp = args[8]
+        if (!string.IsNullOrWhiteSpace(argumentos[8]))
+            anotacoesTemp = argumentos[8]
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
                 .Select(a => new Anotacao { Texto = a.Trim(), DataCriacao = DateTime.Now })
                 .ToList();
@@ -208,4 +243,3 @@ class Program
         Console.WriteLine("Compromisso removido.");
     }
 }
-

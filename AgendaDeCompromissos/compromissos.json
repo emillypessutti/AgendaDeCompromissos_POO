@@ -1,29 +1,29 @@
 [
   {
-    "Descricao": "Aula de POO",
+    "Descricao": "Anivers\u00E1rio",
     "Usuario": {
       "Compromissos": [],
-      "Nome": "Emilly"
+      "Nome": "Ivanice"
     },
     "Local": {
-      "NomeLocal": "Sala L18",
-      "CapacidadeMax": 15
+      "NomeLocal": "Casa",
+      "CapacidadeMax": 7
     },
     "participantes": [
       {
-        "Nome": "Mariana"
+        "Nome": "Emilly"
       },
       {
-        "Nome": "Ivanice"
+        "Nome": "Mariana"
       }
     ],
     "anotacoes": [
       {
-        "Texto": "Levar notebook",
-        "DataCriacao": "2025-05-25T12:00:00.6990671-03:00"
+        "Texto": "Comprar presente",
+        "DataCriacao": "2025-05-25T14:08:47.7828732-03:00"
       }
     ],
-    "Data": "2025-05-26T00:00:00",
-    "Hora": "15:00:00"
+    "Data": "2025-11-09T00:00:00",
+    "Hora": "20:00:00"
   }
 ]

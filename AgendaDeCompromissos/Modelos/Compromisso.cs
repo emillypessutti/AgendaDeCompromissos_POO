@@ -67,7 +67,7 @@ public class Compromisso
             ? string.Join(" | ", anotacoes.Select(a => a.Texto))
             : "Nenhuma";
 
-        return $"Usuário: {Usuario?.Nome}, Compromisso: {Descricao}, Data: {Data:dd/MM/yyyy}, Hora: {Hora:hh\\:mm}, Local: {Local?.NomeLocal}, Capacidade: {Local?.CapacidadeMax}, Participantes: {nomesParticipantes}, Anotações: {textosAnotacoes}, Data de criação: {anotacoes?.FirstOrDefault()?.DataCriacao:dd/MM/yyyy}";
+        return $"Usuário: {Usuario?.Nome}, Data: {Data:dd/MM/yyyy}, Hora: {Hora:hh\\:mm}, Compromisso: {Descricao}, Local: {Local?.NomeLocal}, Capacidade: {Local?.CapacidadeMax}, Participantes: {nomesParticipantes}, Anotações: {textosAnotacoes}, Data de criação: {anotacoes?.FirstOrDefault()?.DataCriacao:dd/MM/yyyy}";
     }
 
 }

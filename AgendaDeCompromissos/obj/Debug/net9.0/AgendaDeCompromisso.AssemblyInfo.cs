@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AgendaDeCompromisso")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1f939a44a173faa6abcbe948b5388dfe30dee02b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ee8396c26308d906151c366af960ef4b3447710")]
 [assembly: System.Reflection.AssemblyProductAttribute("AgendaDeCompromisso")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AgendaDeCompromisso")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
