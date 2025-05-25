@@ -1,19 +1,21 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using AgendaDeCompromisso.Modelos;
+using AgendaDeCompromisso.Persistencia;
 class Program
 {
     const string caminhoArquivo = "compromissos.json";
     static void Main(string[] args)
     {
 
-        List<Compromisso> compromissos = CarregarCompromissos();
+        List<Compromisso> compromissos = RepositorioCompromissos.CarregarCompromisso();
 
         if (args.Length == 0)
         {
             Console.WriteLine(" \n===Agenda de Compromissos===\n");
             Console.WriteLine(" Listar");
             Console.WriteLine(" Adicionar <usuario> <data> <hora> <descricao> <local> <capacidade> <participantes> <anotacoes>");
-            Console.WriteLine(" Editar <usuario> <data> <hora> <descricao> <local> <capacidade> <participantes> <anotacoes>");
+            Console.WriteLine(" Editar <numero_exibido> <usuario> <data> <hora> <descricao> <local> <capacidade> <participantes> <anotacoes>");
             Console.WriteLine(" Excluir <indice>");
             Console.WriteLine(" Sair");
             return;
@@ -43,19 +45,7 @@ class Program
                 break;
         }
 
-        SalvarCompromissos(compromissos);
-    }
-    static void SalvarCompromissos(List<Compromisso> lista)
-    {
-        var json = JsonSerializer.Serialize(lista, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(caminhoArquivo, json);
-    }
-
-    static List<Compromisso> CarregarCompromissos()
-    {
-        if (!File.Exists(caminhoArquivo)) return new List<Compromisso>();
-        var json = File.ReadAllText(caminhoArquivo);
-        return JsonSerializer.Deserialize<List<Compromisso>>(json) ?? new List<Compromisso>();
+        RepositorioCompromissos.SalvarCompromisso(compromissos);
     }
 
     static void ListarCompromissos(IList<Compromisso> lista)
@@ -68,15 +58,7 @@ class Program
 
         for (int i = 0; i < lista.Count; i++)
         {
-            var c = lista[i];
-            var nomesParticipantes = c.participantes != null && c.participantes.Count > 0
-                ? string.Join(", ", c.participantes.Select(p => p.Nome))
-                : "Nenhum";
-            var textosAnotacoes = c.anotacoes != null && c.anotacoes.Count > 0
-                ? string.Join(" | ", c.anotacoes.Select(a => a.Texto))
-                : "Nenhuma";
-
-            Console.WriteLine($"{i + 1}. Criado por: {c.Usuario?.Nome} - Dia {c.Data:dd/MM/yyyy} às {c.Hora} - Local: {c.Local?.NomeLocal} - Descrição: {c.Descricao} - Capacidade: {c.Local?.CapacidadeMax} - Participantes: {nomesParticipantes} - Anotações: {textosAnotacoes}");
+            Console.WriteLine($"{i + 1}. {lista[i]}");
         }
     }
 
@@ -129,7 +111,7 @@ class Program
             anotacoes = args.Length > 7
     ? args[7]
         .Split(',', StringSplitOptions.RemoveEmptyEntries)
-        .Select(a => new Anotacao { Texto = a.Trim() })
+        .Select(a => new Anotacao { Texto = a.Trim(), DataCriacao = DateTime.Now })
         .ToList()
     : new List<Anotacao>()
         };
@@ -140,10 +122,6 @@ class Program
 
     static void EditarCompromissos(string[] args, List<Compromisso> lista)
     {
-        Console.WriteLine("Argumentos recebidos: " + args.Length);
-        for (int i = 0; i < args.Length; i++)
-            Console.WriteLine($"args[{i}]: '{args[i]}'");
-
         if (args.Length < 9)
         {
             Console.WriteLine("Uso: editar <numero_exibido> <novo_usuario> <nova_data> <nova_hora> <novo_local> <nova_descricao> <nova_capacidade> <novo_participante> <nova_anotacao>");
@@ -157,26 +135,53 @@ class Program
         }
         int indice = indiceVisual - 1;
 
-        if (!string.IsNullOrWhiteSpace(args[1]))
-            lista[indice].Usuario = new Usuario { Nome = args[1] };
-        if (!string.IsNullOrWhiteSpace(args[2]))
-            lista[indice].Data = DateTime.Parse(args[2]);
-        if (!string.IsNullOrWhiteSpace(args[3]))
-            lista[indice].Hora = TimeSpan.Parse(args[3]);
-        if (!string.IsNullOrWhiteSpace(args[4]))
-            lista[indice].Descricao = args[4];
+        // Copia os valores atuais para variáveis temporárias
+        var compromisso = lista[indice];
+        var usuarioTemp = !string.IsNullOrWhiteSpace(args[1]) ? new Usuario { Nome = args[1] } : compromisso.Usuario;
+        var dataTemp = !string.IsNullOrWhiteSpace(args[2]) ? DateTime.Parse(args[2]) : compromisso.Data;
+        var horaTemp = !string.IsNullOrWhiteSpace(args[3]) ? TimeSpan.Parse(args[3]) : compromisso.Hora;
+        var descricaoTemp = !string.IsNullOrWhiteSpace(args[4]) ? args[4] : compromisso.Descricao;
+        var localTemp = compromisso.Local != null
+            ? new Local { NomeLocal = compromisso.Local.NomeLocal, CapacidadeMax = compromisso.Local.CapacidadeMax }
+            : new Local();
+
         if (!string.IsNullOrWhiteSpace(args[5]))
-            lista[indice].Local = new Local { NomeLocal = args[5], CapacidadeMax = int.Parse(args[6]) };
+            localTemp.NomeLocal = args[5];
+        if (!string.IsNullOrWhiteSpace(args[6]))
+            localTemp.CapacidadeMax = int.Parse(args[6]);
+
+        var participantesTemp = compromisso.participantes;
         if (!string.IsNullOrWhiteSpace(args[7]))
-            lista[indice].participantes = args[7]
+            participantesTemp = args[7]
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
                 .Select(p => new Participante { Nome = p.Trim() })
                 .ToList();
+
+        var anotacoesTemp = compromisso.anotacoes;
         if (!string.IsNullOrWhiteSpace(args[8]))
-            lista[indice].anotacoes = args[8]
+            anotacoesTemp = args[8]
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                .Select(a => new Anotacao { Texto = a.Trim() })
+                .Select(a => new Anotacao { Texto = a.Trim(), DataCriacao = DateTime.Now })
                 .ToList();
+
+        // Validação antes de aplicar as alterações
+        if (localTemp != null && participantesTemp != null)
+        {
+            if (!localTemp.ValidarCapacidade(participantesTemp.Count))
+            {
+                Console.WriteLine("Quantidade de participantes excede a capacidade máxima do local.");
+                return;
+            }
+        }
+
+        // Só aplica as alterações se passou na validação
+        compromisso.Usuario = usuarioTemp;
+        compromisso.Data = dataTemp;
+        compromisso.Hora = horaTemp;
+        compromisso.Descricao = descricaoTemp;
+        compromisso.Local = localTemp;
+        compromisso.participantes = participantesTemp ?? new List<Participante>();
+        compromisso.anotacoes = anotacoesTemp;
 
         Console.WriteLine("Compromisso editado.");
     }

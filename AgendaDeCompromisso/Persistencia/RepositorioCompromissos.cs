@@ -6,11 +6,20 @@ namespace AgendaDeCompromisso.Persistencia;
 
 public class RepositorioCompromissos
 {
-    const string caminhoArquivo = "compromissos.json";
-    static void SalvarCompromissos(List<Compromisso> lista)
+    private const string caminhoArquivo = "compromissos.json";
+
+    public static void SalvarCompromisso(List<Compromisso> lista)
     {
         var json = JsonSerializer.Serialize(lista, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(caminhoArquivo, json);
     }
 
+    public static List<Compromisso> CarregarCompromisso()
+    {
+        if (!File.Exists(caminhoArquivo)) return new List<Compromisso>();
+        var json = File.ReadAllText(caminhoArquivo);
+        return JsonSerializer.Deserialize<List<Compromisso>>(json) ?? new List<Compromisso>();
+    }
 }
+
+

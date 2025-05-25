@@ -15,7 +15,7 @@ public class Compromisso
 
     public List<Participante> participantes { get; set; } = new();
 
-    public List<Anotacao> anotacoes { get; set; }= new();
+    public List<Anotacao> anotacoes { get; set; } = new();
     public DateTime Data
     {
         get => _data;
@@ -34,10 +34,9 @@ public class Compromisso
         get => _hora;
         set
         {
-            if (!TimeSpan.TryParse(value.ToString(), out _))
-            {
-                throw new ArgumentException("A hora deve ser válida.");
-            }
+            if (value < TimeSpan.Zero || value >= TimeSpan.FromDays(1))
+                throw new ArgumentException("A hora deve estar entre 00:00 e 23:59.");
+            _hora = value;
         }
     }
 
@@ -61,6 +60,14 @@ public class Compromisso
 
     public override string ToString()
     {
-        return $"Usuário: {Local?.NomeLocal}, Compromisso: {Descricao}, Data: {Data}, Hora: {Hora}, Local: {Local?.NomeLocal}, Capacidade: {Local?.CapacidadeMax}, Participantes: {participantes.Count}, Anotações: {anotacoes.Count}";
+        var nomesParticipantes = participantes != null && participantes.Count > 0
+            ? string.Join(", ", participantes.Select(p => p.Nome))
+            : "Nenhum";
+        var textosAnotacoes = anotacoes != null && anotacoes.Count > 0
+            ? string.Join(" | ", anotacoes.Select(a => a.Texto))
+            : "Nenhuma";
+
+        return $"Usuário: {Usuario?.Nome}, Compromisso: {Descricao}, Data: {Data:dd/MM/yyyy}, Hora: {Hora:hh\\:mm}, Local: {Local?.NomeLocal}, Capacidade: {Local?.CapacidadeMax}, Participantes: {nomesParticipantes}, Anotações: {textosAnotacoes}, Data de criação: {anotacoes?.FirstOrDefault()?.DataCriacao:dd/MM/yyyy}";
     }
+
 }
