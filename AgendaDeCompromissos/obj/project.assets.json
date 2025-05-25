@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\PC\\Desktop\\POO\\AP4\\AgendaDeCompromissos\\AgendaDeCompromisso.csproj",
+      "projectUniqueName": "C:\\Users\\PC\\Desktop\\AgendaDeCompromissos_POO\\AgendaDeCompromissos\\AgendaDeCompromisso.csproj",
       "projectName": "AgendaDeCompromisso",
-      "projectPath": "C:\\Users\\PC\\Desktop\\POO\\AP4\\AgendaDeCompromissos\\AgendaDeCompromisso.csproj",
+      "projectPath": "C:\\Users\\PC\\Desktop\\AgendaDeCompromissos_POO\\AgendaDeCompromissos\\AgendaDeCompromisso.csproj",
       "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\PC\\Desktop\\POO\\AP4\\AgendaDeCompromissos\\obj\\",
+      "outputPath": "C:\\Users\\PC\\Desktop\\AgendaDeCompromissos_POO\\AgendaDeCompromissos\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config"
