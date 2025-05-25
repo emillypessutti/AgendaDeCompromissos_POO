@@ -1,0 +1,29 @@
+[
+  {
+    "Descricao": "Aula de POO",
+    "Usuario": {
+      "Compromissos": [],
+      "Nome": "Emilly"
+    },
+    "Local": {
+      "NomeLocal": "Sala L18",
+      "CapacidadeMax": 15
+    },
+    "participantes": [
+      {
+        "Nome": "Mariana"
+      },
+      {
+        "Nome": "Ivanice"
+      }
+    ],
+    "anotacoes": [
+      {
+        "Texto": "Levar notebook",
+        "DataCriacao": "2025-05-25T12:00:00.6990671-03:00"
+      }
+    ],
+    "Data": "2025-05-26T00:00:00",
+    "Hora": "15:00:00"
+  }
+]
