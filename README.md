@@ -75,7 +75,7 @@ dotnet run -- editar 1 "" "" "" "" "" 5 "" ""
 
 ---
 
-# SOBRE OS DADOS
+## Sobre os dados
 
 - Todas as informações dos compromissos são salvas automaticamente no arquivo compromissos.json após cada operação (inclusão, edição ou exclusão).
 
