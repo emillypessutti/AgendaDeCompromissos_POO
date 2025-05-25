@@ -51,7 +51,7 @@ dotnet run -- excluir <indice>
 ## Observações
 
 - Ao adicionar ou editar compromissos pela linha de comando, todos os campos devem ser informados na ordem correta.
-- Se você quiser manter o valor atual de um campo ou deixar um campo em branco, use aspas duplas vazias ("") para aquele campo.
+- Se você quiser manter o valor atual de um campo ao editar, use aspas duplas vazias ("") para aquele campo.
 - Os campos **participantes** e **anotações** são **opcionais**:
   - Você pode deixar em branco usando `""`.
   - Se desejar adicionar mais de um participante ou anotação, separe com vírgulas.
