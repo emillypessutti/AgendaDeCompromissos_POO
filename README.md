@@ -15,7 +15,7 @@ Criar um sistema de compromissos que funcione via linha de comando (CLI), utiliz
 
 1. No terminal, navegue até a pasta do projeto:
 ```bash
-cd AgendaDeCompromisso
+cd AgendaDeCompromissos
 ```
 2. Execute o comando e abaixo e compile o projeto:
 ```bash
