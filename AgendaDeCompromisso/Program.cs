@@ -15,7 +15,7 @@ class Program
             Console.WriteLine(" \n===Agenda de Compromissos===\n");
             Console.WriteLine(" Listar");
             Console.WriteLine(" Adicionar <usuario> <data> <hora> <descricao> <local> <capacidade> <participantes> <anotacoes>");
-            Console.WriteLine(" Editar <numero_exibido> <usuario> <data> <hora> <descricao> <local> <capacidade> <participantes> <anotacoes>");
+            Console.WriteLine(" Editar <indice> <usuario> <data> <hora> <descricao> <local> <capacidade> <participantes> <anotacoes>");
             Console.WriteLine(" Excluir <indice>");
             Console.WriteLine(" Sair");
             return;
@@ -70,7 +70,7 @@ class Program
             return;
         }
 
-        for (int i = 0; i < args.Length; i++)
+        for (int i = 0; i <= 5; i++)
         {
             if (string.IsNullOrWhiteSpace(args[i]))
             {
@@ -122,49 +122,53 @@ class Program
 
     static void EditarCompromissos(string[] args, List<Compromisso> lista)
     {
-        if (args.Length < 9)
+        if (args.Length < 1)
         {
-            Console.WriteLine("Uso: editar <numero_exibido> <novo_usuario> <nova_data> <nova_hora> <novo_local> <nova_descricao> <nova_capacidade> <novo_participante> <nova_anotacao>");
+            Console.WriteLine("Uso: editar <indice> <novo_usuario> <nova_data> <nova_hora> <novo_local> <nova_descricao> <nova_capacidade> <novo_participante> <nova_anotacao>");
             return;
         }
 
-        if (!int.TryParse(args[0], out int indiceVisual) || indiceVisual < 1 || indiceVisual > lista.Count)
+        string[] argumentos = new string[9];
+        for (int i = 0; i < 9; i++)
+        {
+            argumentos[i] = i < args.Length ? args[i] : "";
+        }
+
+        if (!int.TryParse(argumentos[0], out int indiceVisual) || indiceVisual < 1 || indiceVisual > lista.Count)
         {
             Console.WriteLine("Número inválido.");
             return;
         }
         int indice = indiceVisual - 1;
 
-        // Copia os valores atuais para variáveis temporárias
         var compromisso = lista[indice];
-        var usuarioTemp = !string.IsNullOrWhiteSpace(args[1]) ? new Usuario { Nome = args[1] } : compromisso.Usuario;
-        var dataTemp = !string.IsNullOrWhiteSpace(args[2]) ? DateTime.Parse(args[2]) : compromisso.Data;
-        var horaTemp = !string.IsNullOrWhiteSpace(args[3]) ? TimeSpan.Parse(args[3]) : compromisso.Hora;
-        var descricaoTemp = !string.IsNullOrWhiteSpace(args[4]) ? args[4] : compromisso.Descricao;
+        var usuarioTemp = !string.IsNullOrWhiteSpace(argumentos[1]) ? new Usuario { Nome = argumentos[1] } : compromisso.Usuario;
+        var dataTemp = !string.IsNullOrWhiteSpace(argumentos[2]) ? DateTime.Parse(argumentos[2]) : compromisso.Data;
+        var horaTemp = !string.IsNullOrWhiteSpace(argumentos[3]) ? TimeSpan.Parse(argumentos[3]) : compromisso.Hora;
+        var descricaoTemp = !string.IsNullOrWhiteSpace(argumentos[4]) ? argumentos[4] : compromisso.Descricao;
         var localTemp = compromisso.Local != null
             ? new Local { NomeLocal = compromisso.Local.NomeLocal, CapacidadeMax = compromisso.Local.CapacidadeMax }
             : new Local();
 
-        if (!string.IsNullOrWhiteSpace(args[5]))
-            localTemp.NomeLocal = args[5];
-        if (!string.IsNullOrWhiteSpace(args[6]))
-            localTemp.CapacidadeMax = int.Parse(args[6]);
+        if (!string.IsNullOrWhiteSpace(argumentos[5]))
+            localTemp.NomeLocal = argumentos[5];
+        if (!string.IsNullOrWhiteSpace(argumentos[6]))
+            localTemp.CapacidadeMax = int.Parse(argumentos[6]);
 
         var participantesTemp = compromisso.participantes;
-        if (!string.IsNullOrWhiteSpace(args[7]))
-            participantesTemp = args[7]
+        if (!string.IsNullOrWhiteSpace(argumentos[7]))
+            participantesTemp = argumentos[7]
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
                 .Select(p => new Participante { Nome = p.Trim() })
                 .ToList();
 
         var anotacoesTemp = compromisso.anotacoes;
-        if (!string.IsNullOrWhiteSpace(args[8]))
-            anotacoesTemp = args[8]
+        if (!string.IsNullOrWhiteSpace(argumentos[8]))
+            anotacoesTemp = argumentos[8]
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
                 .Select(a => new Anotacao { Texto = a.Trim(), DataCriacao = DateTime.Now })
                 .ToList();
 
-        // Validação antes de aplicar as alterações
         if (localTemp != null && participantesTemp != null)
         {
             if (!localTemp.ValidarCapacidade(participantesTemp.Count))
@@ -174,7 +178,6 @@ class Program
             }
         }
 
-        // Só aplica as alterações se passou na validação
         compromisso.Usuario = usuarioTemp;
         compromisso.Data = dataTemp;
         compromisso.Hora = horaTemp;
